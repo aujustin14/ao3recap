@@ -575,7 +575,7 @@ def changeRecapSettings(marks, settings):
 				elif (selectedSetting == "warnings" or selectedSetting == "categories"):
 					print("6", end="")
 				else:
-					print("20", end="")
+					print("30", end="")
 				print(" rankings.")
 				print("* Costs 5 lines if shown + 1 line per ranking.")
 		print("`. Back")
@@ -616,7 +616,7 @@ def changeRecapSettings(marks, settings):
 					elif (int(userInput) == 2):
 						settings[selectedSetting] = False
 						selectedSetting = ""
-				elif ((selectedSetting == "ratings" and userInput.isdigit() and 0 <= int(userInput) <= 5) or (selectedSetting in ["warnings", "categories"] and userInput.isdigit() and 0 <= int(userInput) <= 6) or (selectedSetting not in ["backlogCounts", "readCounts", "ratings", "warnings", "categories"] and userInput.isdigit() and 0 <= int(userInput) <= 20)):
+				elif ((selectedSetting == "ratings" and userInput.isdigit() and 0 <= int(userInput) <= 5) or (selectedSetting in ["warnings", "categories"] and userInput.isdigit() and 0 <= int(userInput) <= 6) or (selectedSetting not in ["backlogCounts", "readCounts", "ratings", "warnings", "categories"] and userInput.isdigit() and 0 <= int(userInput) <= 30)):
 					settings[selectedSetting] = int(userInput)
 					selectedSetting = ""
 				elif (userInput == "`"):
@@ -853,7 +853,7 @@ def createRecap(path, scores, marks, settings):
 			if (userInput.lower() == "q"):
 				pyperclip.copy(recapText)
 				recapCopied = True
-			elif (len(userInput) == 0):
+			else:
 				viewingRecap = False
 		except:
 			continue
