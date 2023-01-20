@@ -108,7 +108,7 @@ def selectData(path, scores, marks):
 
 	while (selectingData):
 		allAvailableOptions = []
-		for currentJSONFile in glob.glob("ao3recap\\saved\\*.json"):
+		for currentJSONFile in glob.glob("saved\\*.json"):
 			allAvailableOptions.insert(0, currentJSONFile.split("\\")[-1])
 
 		clearScreen()
@@ -131,7 +131,7 @@ def selectData(path, scores, marks):
 			if (userInput.lower() == "q"):
 				createNewDataSet()
 			elif (userInput.isdigit() and (int(userInput) >= 1 and int(userInput) <= len(allAvailableOptions))):
-				selectedPath = "ao3recap\\saved\\" + str(allAvailableOptions[int(userInput) - 1])
+				selectedPath = "saved\\" + str(allAvailableOptions[int(userInput) - 1])
 				with open(selectedPath) as f:
 					data = json.load(f)
 					for i in range(len(data["folderNames"])):
@@ -435,10 +435,10 @@ def parseData(path, session):
 		"savedData": savedData
 	}
 
-	with open(time.strftime("ao3recap\\saved\\%Y_%m_%d_%H_%M.json", time.localtime()), "w") as f:
+	with open(time.strftime("saved\\%Y_%m_%d_%H_%M.json", time.localtime()), "w") as f:
 		json.dump(savedDataDict, f, default=str)
 
-	allSavedData = glob.glob("ao3recap\\saved\\*.json")
+	allSavedData = glob.glob("saved\\*.json")
 	if (len(allSavedData) > 10):
 		oldestFile = min(allSavedData, key=os.path.getctime)
 		os.remove(os.path.abspath(oldestFile))
