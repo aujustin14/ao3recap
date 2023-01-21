@@ -81,17 +81,19 @@ def startApp():
 
 		try:
 			userInput = input("> ")
-			if (userInput.isdigit() and int(userInput) == 1):
-				filePath, scoredFolders, markedFolders = selectData(filePath, scoredFolders, markedFolders)
-			elif (((userInput.isdigit() and int(userInput) >= 2 and int(userInput) <= 4) or (userInput.lower() == "q")) and len(filePath) > 0):
-				if (userInput.isdigit() and int(userInput) == 2):
-					scoredFolders = scoreFolders(filePath, scoredFolders)
-				elif (userInput.isdigit() and int(userInput) == 3):
-					markedFolders = markFolders(filePath, markedFolders)
-				elif (userInput.isdigit() and int(userInput) == 4):
-					recapSettings = changeRecapSettings(markedFolders, recapSettings)
-				elif (userInput.lower() == "q" and lineCount <= lineLimit):
-					createRecap(filePath, scoredFolders, markedFolders, recapSettings)
+			if (userInput.isdecimal()):
+				userInput = int(userInput)
+				if (userInput == 1):
+					filePath, scoredFolders, markedFolders = selectData(filePath, scoredFolders, markedFolders)
+				elif (2 <= userInput <= 4 and len(filePath) > 0):
+					if (userInput == 2):
+						scoredFolders = scoreFolders(filePath, scoredFolders)
+					elif (userInput == 3):
+						markedFolders = markFolders(filePath, markedFolders)
+					elif (userInput == 4):
+						recapSettings = changeRecapSettings(markedFolders, recapSettings)
+			elif (userInput.lower() == "q" and lineCount <= lineLimit and len(filePath) > 0):
+				createRecap(filePath, scoredFolders, markedFolders, recapSettings)
 			elif (userInput == "`"):
 				appRunning = False
 				clearScreen()
@@ -130,14 +132,16 @@ def selectData(path, scores, marks):
 			userInput = input("> ")
 			if (userInput.lower() == "q"):
 				createNewDataSet()
-			elif (userInput.isdigit() and (int(userInput) >= 1 and int(userInput) <= len(allAvailableOptions))):
-				selectedPath = "saved\\" + str(allAvailableOptions[int(userInput) - 1])
-				with open(selectedPath) as f:
-					data = json.load(f)
-					for i in range(len(data["folderNames"])):
-						selectedScoredFolders.append(1)
-						selectedMarkedFolders.append(1)
-				selectingData = False
+			elif (userInput.isdecimal()):
+				userInput = int(userInput)
+				if (1 <= userInput <= len(allAvailableOptions)):
+					selectedPath = "saved\\" + str(allAvailableOptions[userInput - 1])
+					with open(selectedPath) as f:
+						data = json.load(f)
+						for i in range(len(data["folderNames"])):
+							selectedScoredFolders.append(1)
+							selectedMarkedFolders.append(1)
+					selectingData = False
 			elif (userInput == "`"):
 				selectedPath = path
 				selectedScoredFolders = scores
@@ -171,10 +175,11 @@ def createNewDataSet():
 
 		try:
 			userInput = input("> ")
-			if (userInput.isdigit()):
-				if (int(userInput) == 1):
+			if (userInput.isdecimal()):
+				userInput = int(userInput)
+				if (userInput == 1):
 					filePath = selectFile()
-				elif (int(userInput) == 2):
+				elif (userInput == 2):
 					currentSession = logIn(currentSession)
 			elif (userInput.lower() == "q" and len(filePath) > 0):
 				parseData(filePath, currentSession)
@@ -230,7 +235,7 @@ def selectFile():
 		try:
 			userInput = input("> ")
 			if (".html" in currentPath):
-				if (userInput.isdigit() and int(userInput) == 1):
+				if (userInput.isdecimal() and int(userInput) == 1):
 					selectingFile = False
 				elif (userInput == "`"):
 					currentPath = currentPath.split("\\")
@@ -238,13 +243,15 @@ def selectFile():
 					currentPath = "\\".join(currentPath)
 					currentPath += "\\"
 			else:
-				if (userInput.isdigit() and (int(userInput) >= 1 and int(userInput) <= min(len(allAvailableOptions) - (10 * currentPage), 9)) or (userInput.isdigit() and int(userInput) == 0 and len(allAvailableOptions) - (10 * currentPage) >= 10)):
-					if (userInput.isdigit() and int(userInput) == 0 and len(allAvailableOptions) - (10 * currentPage) >= 10):
-						userInput = "10"
-					currentPath += allAvailableOptions[(10 * currentPage) + int(userInput) - 1]
-					if (".html" not in allAvailableOptions[(10 * currentPage) + int(userInput) - 1]):
-						currentPath += "\\"
-						currentPage = 0
+				if (userInput.isdecimal()):
+					userInput = int(userInput)
+					if (1 <= userInput <= min(len(allAvailableOptions) - (10 * currentPage), 9) or (userInput == 0 and len(allAvailableOptions) - (10 * currentPage) >= 10)):
+						if (userInput == 0 and len(allAvailableOptions) - (10 * currentPage) >= 10):
+							userInput = "10"
+						currentPath += allAvailableOptions[(10 * currentPage) + int(userInput) - 1]
+						if (".html" not in allAvailableOptions[(10 * currentPage) + int(userInput) - 1]):
+							currentPath += "\\"
+							currentPage = 0
 				elif (userInput == "`"):
 					if (len(currentPath) > 0):
 						currentPath = currentPath.split("\\")
@@ -313,7 +320,7 @@ def logIn(session):
 				currentPassword = userInput
 				enteringPassword = False
 			else:
-				if (userInput.isdigit()):
+				if (userInput.isdecimal()):
 					userInput = int(userInput)
 					if (userInput == 1):
 						enteringUsername = True
@@ -476,13 +483,16 @@ def scoreFolders(path, scores):
 		try:
 			userInput = input("> ")
 			if (selectedFolder == -1):
-				if (userInput.isdigit() and int(userInput) >= 1 and int(userInput) <= len(allFolders)):
-					selectedFolder = int(userInput) - 1
+				if (userInput.isdecimal()):
+					userInput = int(userInput)
+					if (1 <= userInput <= len(allFolders)):
+						selectedFolder = userInput - 1
 				elif (userInput == "`"):
 					scoringFolders = False
 			elif (selectedFolder >= 0):
-				if (userInput.lstrip("-").isdigit()):
-					scores[selectedFolder] = int(userInput)
+				if (userInput.lstrip("-").isdecimal()):
+					userInput = int(userInput)
+					scores[selectedFolder] = userInput
 					selectedFolder = -1
 				elif (userInput == "`"):
 					selectedFolder = -1
@@ -513,8 +523,10 @@ def markFolders(path, marks):
 
 		try:
 			userInput = input("> ")
-			if (userInput.isdigit() and int(userInput) >= 1 and int(userInput) <= len(allFolders)):
-				marks[int(userInput) - 1] = 0 if marks[int(userInput) - 1] == 1 else 1
+			if (userInput.isdecimal()):
+				userInput = int(userInput)
+				if (1 <= userInput <= len(allFolders)):
+					marks[userInput - 1] = 0 if marks[userInput - 1] == 1 else 1
 			elif (userInput == "`"):
 				markingFolders = False
 		except:
@@ -583,42 +595,47 @@ def changeRecapSettings(marks, settings):
 		try:
 			userInput = input("> ")
 			if (len(selectedSetting) == 0):
-				if (userInput.isdigit()):
-					if (int(userInput) == 1):
-						# settings["backlogCounts"] = True if (not settings["backlogCounts"]) else False
+				if (userInput.isdecimal()):
+					userInput = int(userInput)
+					if (userInput == 1):
 						selectedSetting = "backlogCounts"
-					elif (int(userInput) == 2):
-						# settings["readCounts"] = True if (not settings["readCounts"]) else False
+					elif (userInput == 2):
 						selectedSetting = "readCounts"
-					elif (int(userInput) == 3):
+					elif (userInput == 3):
 						selectedSetting = "ratings"
-					elif (int(userInput) == 4):
+					elif (userInput == 4):
 						selectedSetting = "warnings"
-					elif (int(userInput) == 5):
+					elif (userInput == 5):
 						selectedSetting = "categories"
-					elif (int(userInput) == 6):
+					elif (userInput == 6):
 						selectedSetting = "fandoms"
-					elif (int(userInput) == 7):
+					elif (userInput == 7):
 						selectedSetting = "relationships"
-					elif (int(userInput) == 8):
+					elif (userInput == 8):
 						selectedSetting = "characters"
-					elif (int(userInput) == 9):
+					elif (userInput == 9):
 						selectedSetting = "tags"
-					elif (int(userInput) == 0):
+					elif (userInput == 0):
 						selectedSetting = "languages"
 				elif (userInput == "`"):
 					changingSettings = False
 			else:
-				if (selectedSetting in ["backlogCounts", "readCounts"] and userInput.isdigit()):
-					if (int(userInput) == 1):
-						settings[selectedSetting] = True
+				if (userInput.isdecimal()):
+					userInput = int(userInput)
+					if (selectedSetting in ["backlogCounts", "readCounts"]):
+						if (userInput == 1):
+							settings[selectedSetting] = True
+							selectedSetting = ""
+						elif (userInput == 2):
+							settings[selectedSetting] = False
+							selectedSetting = ""
+					elif (
+						(selectedSetting == "ratings" and 0 <= userInput <= 5)
+						or (selectedSetting in ["warnings", "categories"] and 0 <= userInput <= 6)
+						or (selectedSetting not in ["backlogCounts", "readCounts", "ratings", "warnings", "categories"] and 0 <= userInput <= 30)
+					):
+						settings[selectedSetting] = userInput
 						selectedSetting = ""
-					elif (int(userInput) == 2):
-						settings[selectedSetting] = False
-						selectedSetting = ""
-				elif ((selectedSetting == "ratings" and userInput.isdigit() and 0 <= int(userInput) <= 5) or (selectedSetting in ["warnings", "categories"] and userInput.isdigit() and 0 <= int(userInput) <= 6) or (selectedSetting not in ["backlogCounts", "readCounts", "ratings", "warnings", "categories"] and userInput.isdigit() and 0 <= int(userInput) <= 30)):
-					settings[selectedSetting] = int(userInput)
-					selectedSetting = ""
 				elif (userInput == "`"):
 					selectedSetting = ""
 		except:
